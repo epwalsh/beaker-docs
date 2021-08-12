@@ -60,7 +60,7 @@ beaker image create --name my-experiment my-experiment
 
 Now that we have a Docker image we can begin to define our experiment.  We will do this by writing a YAML file called `beaker-config.yaml` that tells Beaker information like what image to use and where to run the experiment.
 
-```
+```yaml
 version: v2-alpha
 description: My Experiment
 tasks:
