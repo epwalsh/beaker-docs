@@ -10,7 +10,7 @@ This example assumes you've successfully [installed Beaker and Docker](install.m
 
 As a first step, you need to create a Docker image for your code so Beaker can run it on a cluster.  Fortunately, for simple Python applications this is quite straightforward.  The first step is to create a `Dockerfile` in the same directory as your code.  Below is a sample Dockerfile that can be adapted to your project.  It was simplified from [the AllenNLP Dockerfile](https://github.com/allenai/allennlp/blob/main/Dockerfile).
 
-```
+```Dockerfile
 # The base image, which will be the starting point for the Docker image.
 # This image includes Ubuntu with the latest Python 3.8 release installed.
 FROM python:3.8
