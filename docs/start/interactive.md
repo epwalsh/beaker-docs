@@ -270,7 +270,7 @@ The session will stop when the main process exits.
 You can also provide a command to `exec`. This example prints GPU utilization:
 
 ```
-beaker session exec <session> nvidia-smi
+beaker session exec <session> -- nvidia-smi
 ```
 
 ## Stopping a Session

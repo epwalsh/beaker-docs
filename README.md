@@ -19,6 +19,7 @@ frees you from manually managing your machines, allowing you to seamlessly:
 * [Install](/docs/start/install.md)
 * [Running Your First Experiment](/docs/start/run.md)
 * [Interactive Sessions](/docs/start/interactive.md)
+* [Run your own cluster](/docs/start/selfhost.md)
 
 ### Learn Concepts
 
