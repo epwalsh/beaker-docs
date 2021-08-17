@@ -84,7 +84,7 @@ An EnvVar defines an environment variable within a task's container.
 | ----- | ---- | :-------: | ----------- |
 | name | string | Yes | Name of the environment variable following Unix rules. Environment variable names are case sensitive and must be unique. |
 | value | string | No | Literal value which can include spaces and special characters. Defaults to "" if no other source is set. |
-| secret | string | No | Source the enviroment variable from a secret in the experiment's workspace. |
+| secret | string | No | Source the enviroment variable from a [secret](./secrets.md) in the experiment's workspace. |
 
 ### DataMount
 
@@ -104,7 +104,7 @@ DataMount describes how to mount a dataset into a task. All datasets are mounted
 | hostPath | string | No\* | Path to a file or directory on the host. The executing host must be configured to allow access to this path or one of its parent directories. |
 | result | string | No\* | Name of a previous task whose result will be mounted. A result source implies a dependency, meaning this task will not run until its parent completes successfully. |
 | url | string | No\* | URL is a web location from which to download data. Beaker currently supports S3 (`s3://`), GCS (`gs://`), and HTTP(S) (`https://`) URLs.
-| secret | string | No\* | Name of a secret within the experiment's workspace which will be mounted as a plain-text file. |
+| secret | string | No\* | Name of a [secret](./secrets.md) within the experiment's workspace which will be mounted as a plain-text file. |
 
 \* Exactly one source field must be defined.
 
