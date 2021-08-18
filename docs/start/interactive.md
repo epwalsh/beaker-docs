@@ -27,7 +27,6 @@ Finally, Beaker will create an interactive session for you.
 
 Each interactive session is hosted in a container sandbox.  Within the container
 you are free to run or install whatever you want; you won't affect other processes on the machine.
-Everything except for your home directory and `/net` is destroyed once the session stops.
 
 By default, interactive sessions use the `allenai/base:cuda11.2-ubuntu20.04` Docker image which is maintained by the Beaker team.
 This image is based on Ubuntu 20.04 and already has CUDA 11.2 drivers installed.
@@ -35,7 +34,8 @@ It also comes with some useful tools like the AWS CLI, Google Cloud CLI, and the
 If you find we've missed a common tool, please contact the team and we will consider adding it.
 
 Your home directory is mounted into the container so anything you write to `~` will persist
-between sessions on that node. NFS is also available in the `/net` directory.
+between sessions on that node. A few other directories are also available from within sessions.
+See [here](../concept/experiments.md#allowedhostpaths) for the full list.
 
 ### Reserving GPUs
 

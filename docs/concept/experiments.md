@@ -101,12 +101,19 @@ DataMount describes how to mount a dataset into a task. All datasets are mounted
 | Field | Type | Required? | Description |
 | ----- | ---- | :-------: | ----------- |
 | beaker | string | No\* | Name or ID of a [Beaker dataset](./datasets.md). Beaker datasets provide the best download performance and are preferred for frequently used datasets. |
-| hostPath | string | No\* | Path to a file or directory on the host. The executing host must be configured to allow access to this path or one of its parent directories. |
+| hostPath | string | No\* | Path to a file or directory on the host. The executing host must be configured to allow access to this path or one of its parent directories. See below for a list of available host paths. |
 | result | string | No\* | Name of a previous task whose result will be mounted. A result source implies a dependency, meaning this task will not run until its parent completes successfully. |
 | url | string | No\* | URL is a web location from which to download data. Beaker currently supports S3 (`s3://`), GCS (`gs://`), and HTTP(S) (`https://`) URLs.
 | secret | string | No\* | Name of a [secret](./secrets.md) within the experiment's workspace which will be mounted as a plain-text file. |
 
 \* Exactly one source field must be defined.
+
+#### Allowed Host Paths
+
+The following host paths are allowed on every on-premise machine managed by the Beaker team:
+ - `/net` for access to NFS.
+ - `/raid` for access to RAID.
+ - `/var/beaker/share` as a shared local scratch space. All Beaker workloads have full access to files in this path, so don't put sensitive information there. Also to avoid collisions it's probably worth generating a subpath that's unlikely to be used by another process.
 
 ### ResultSpec
 
