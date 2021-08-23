@@ -4,7 +4,7 @@ By now you are probably eager to run an experiment with your code in Beaker.  Th
 
 This tutorial assumes that your experiment needs GPUs, is built with PyTorch, and consists of a single command.  If these assumptions don't hold for your experiments, then these general steps will still apply but you might need to make some more modifications to actually run your experiment.
 
-This example assumes you've successfully [installed Beaker and Docker](install.md).
+This example assumes you've successfully [installed Beaker and Docker](install.md). This particular example also uses GPUs and so requires installation of the [NVidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
 ## Creating a Docker Image for Your Code
 
@@ -45,7 +45,7 @@ COPY scripts scripts/
 
 Copy the above Dockerfile to the same directory as your code, and modify it so it copies over all the files needed to run your experiment.  As an example, in the rest of this tutorial I will use the code in https://github.com/beaker/pytorch-example.
 
-Now that you have a Dockerfile, you can build it with `docker build -t my-experiment .`.  This will take a while the first time because building the Docker image involves downloading and installing PyTorch, but the second time you build this will be cached and be much faster.  Once your image is built, you can try it out locally with `docker run -it --rm my-experiment python main.py`.  If your experiment requires a GPU (like the example does) it might fail when you run it locally.
+Now that you have a Dockerfile, you can build it with `docker build -t my-experiment .`.  This will take a while the first time because building the Docker image involves downloading and installing PyTorch, but the second time you build this will be cached and be much faster.  Once your image is built, you can try it out locally with `docker run -it --rm --gpus 0 my-experiment python main.py`.
 
 The `my-experiment` name is the image tag. You can use any string you'd like--we just use `my-experiment` here as an example.
 
