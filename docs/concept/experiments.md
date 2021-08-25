@@ -169,8 +169,8 @@ During periods of contention, each job gets a share of the CPU proportional to t
 | ----- | ---- | :-------: | ----------- |
 | cpuCount | double | No | Minimum number of logical CPU cores. It may be fractional. Since CPU is only limited during periods of contention, it's generally not necessary to specify this field.<br><br>Examples: `4`, `0.5`. |
 | gpuCount | int | No | Minimum number of GPUs. It must be non-negative. |
-| memory | string | No | Minimum available system memory as a number with unit suffix. `memory` must match `memoryBytes` exactly if both are set.<br><br>Examples: `2.5GiB`, `10240m`. |
-| memoryBytes | int | No | Minimum available system memory as an exact byte count. `memoryBytes` must match `memory` exactly if both are set. |
+| memory | string | No | Minimum available system memory as a number with unit suffix. <br><br>Examples: `2.5GiB`, `1024m`. |
+| sharedMemory | string | No | Size of /dev/shm as a number with unit suffix. <br><br>Examples: `2.5GiB`, `1024m`. |
 
 ## Older Spec Formats
 
