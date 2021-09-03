@@ -112,6 +112,21 @@ Verifying image (docker://php)...
 Error: No such image: php
 ```
 
+### Docker
+
+Sessions have access to Docker for building and pushing images.
+The base image has the `docker` command preinstalled.
+
+**Important note on running Docker containers:**
+Please don't use `docker run` to start containers in your interactive session.
+
+Since sessions connect to the host's Docker daemon, any containers started through Docker will
+run outside of the session and won't have access to the session's resources. This could cause
+resource contention and host instability.
+
+Instead of using Docker to run containers, please exit the interactive session and create a 
+new one or use a Beaker batch job to run the workload.
+
 ### Building Custom Images
 
 At some point you might need to install additional software in your interactive session. You can
