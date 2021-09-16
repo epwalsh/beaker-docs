@@ -82,36 +82,6 @@ In the AllenNLP image, you will see a prompt like `I have no name!@fd82c7800efa:
 Please contact the Beaker team if you need help setting up a custom environment for your
 interactive sessions.
 
-### Image Caching
-
-By default Beaker Interactive will use a local copy of an image if one exists. For example, if
-you've run `docker pull allennlp/allennlp` before, then starting a session using that image won't
-pull the latest version to the host:
-
-```
-beaker session create --image docker://allennlp/allennlp
-```
-
-You can change this behavior using the `--pull` flag. The flag can be
-one of `always`, `missing` or `never`, and defaults to `missing`. If the value is `always`,
-the latest version is always retrieved from the source:
-
-```
-beaker session create --image docker://allennlp/allennlp --pull always
-```
-
-If the value is `missing` the image will only be pulled if it doesn't already exist locally.
-
-Setting the value to `never` means the image won't ever be pulled, which means you'll see
-an error if it doesn't exist in the local cache:
-
-```
-beaker session create --image docker://php --pull never
-Starting session 01F51DJY6PQEWFZRVVDQ7072A2... (Press Ctrl+C to cancel)
-Verifying image (docker://php)...
-Error: No such image: php
-```
-
 ### Docker
 
 Sessions have access to Docker for building and pushing images.
@@ -124,89 +94,61 @@ Since sessions connect to the host's Docker daemon, any containers started throu
 run outside of the session and won't have access to the session's resources. This could cause
 resource contention and host instability.
 
-Instead of using Docker to run containers, please exit the interactive session and create a 
+Instead of using Docker to run containers, please exit the interactive session and create a
 new one or use a Beaker batch job to run the workload.
 
 ### Building Custom Images
 
-At some point you might need to install additional software in your interactive session. You can
-do this without exiting the session, but the changes won't persist after the session
-stops. To persist those changes you'll need to build a custom image. For example
-let's assume we want to create an image with  [jq](https://stedolan.github.io/jq/) installed.
+At some point you might need to install additional software in your interactive session.
+By default, the changes that you make inside a session won't persist after the session stops.
+To persist those changes you'll need to save the resulting image with the `--save-image`/`-s` flag.
+When this flag is enabled, Beaker will wait for the session to exit and then write the contents
+of the root filesystem to a new image in the session's workspace. This will save all packages
+installed to the root filesystem such as those installed with `apt-get`. Note that any files
+written to mounted volumes like `/home` or `/net` will not be saved.
 
-Start by creating a `Dockerfile`:
+**Important note on secrets:**
+Never write secrets to the filesystem when using `--save-image` since they will be
+included in the resulting image. Use secret mounts instead.
 
-```
-touch Dockerfile
-```
+For this example, we will create an image with `python2` installed.
 
-If you're unfamiliar with the `Dockerfile` syntax, you can read more about it [here](
-https://docs.docker.com/engine/reference/builder/).
-
-Next chose a base image to start from. If you're unsure of what to use it's probably
-good to use the [allenai/base](https://hub.docker.com/r/allenai/base/tags) image:
-
-```Dockerfile
-FROM allenai/base:cuda11.2-ubuntu20.04
-```
-
-Now we'll add a `RUN` entry to the `Dockerfile` that installs `jq`:
-
-```Dockerfile
-RUN apt-get update && \
-    apt-get install -y jq && \
-    rm -rf /var/lib/apt/lists/*
-```
-
-After that's done we can build an image using the `docker build` command. The resulting image
-will only exist in our local cache:
+First, create a session with the `--save-image` flag:
 
 ```
-docker build -t allenai/base:cuda11.2-ubuntu20.04-jq1.6 .
+beaker session create --save-image
 ```
 
-Now you can start a session using that image like so:
+Then, install `python2`:
 
 ```
-beaker session create --image docker://allenai/base:cuda11.2-ubuntu20.04-jq1.6
+sudo apt-get update
+sudo apt-get install python2
 ```
 
-...and you should now be able to use `jq` like so:
+Now, exit the session with `Ctrl-D`.
+Beaker will automatically create an image in your default workspace and wait for the
+image to be pushed. Once the image is pushed, you can create a new session with it:
 
 ```
-[BEAKER] sams ~ $ echo '{ "jq": "is pretty great!" }' | jq
-{
-  "jq": "is pretty great!"
-}
+beaker session create --image beaker://<image-id>
 ```
 
-At this point the image **only** exists in your local cache. The local image cache is periodically
-flushed, so you'll need to push the image to a remote repository if you'd like to use
-it again later or share it with other folks.
-
-You can push your image to either [Docker Hub](https://hub.docker.com) or
-[Beaker Images](https://beaker.org/images). If you're unsure of which to use, use Beaker, as
-Beaker allows for fine-grained access control.
-
-To push the image to Beaker, use the `beaker image create` command. You'll need to execute
-this command on the host, not in the interactive session -- which you can stop via the `exit`
-command.
+...and you should now be able to use `python2` like so:
 
 ```
-beaker image create allenai/base:cuda11.2-ubuntu20.04-jq1.6 \
-    --name "base-cuda-jq" \
-    --description "allenai/base with jq too!"
+[beaker] name ~ $ python2
+Python 2.7.18 (default, Mar  8 2021, 13:02:45)
+[GCC 9.3.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>>
 ```
 
-Once that's complete, you can start another interactive session using the name you gave the
-Beaker image:
+Give the image a name to make it easier to find in the future:
 
 ```
-beaker session create --image beaker://base-cuda-jq
+beaker image rename <image-id> <new-name>
 ```
-
-That command will work on other hosts too, and the image will be persisted indefinitely so you
-can continue to use it.
 
 ## Git Authentication
 
