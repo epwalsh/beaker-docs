@@ -150,49 +150,64 @@ Give the image a name to make it easier to find in the future:
 beaker image rename <image-id> <new-name>
 ```
 
+## Secrets
+
+[Secrets](../../concept/secrets.md) can be used in sessions through environment variables or files.
+
+To use a secret as an environment variable:
+
+```
+beaker session create --secret-env <secret name>=<environment variable>
+```
+
+To mount a secret as a file:
+
+```
+beaker session create --secret-mount <secret name>=<file path>
+```
+
 ## Git Authentication
 
-You can authenticate with GitHub using a personal access token or
-[an SSH key](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
-Here, we describe authenticating with an access token.
-
-First, generate a new personal access token [here](https://github.com/settings/tokens/new)
-and grant it the repo scope.
-
-![Generating a personal access token with repo scope](/docs/images/github-personal-access-token-scope.png)
-
-You will only be able to view the token on GitHub when it is created so store it in 1Password
-for later use.
-
-Now, you should be able to clone any GitHub repository over HTTPS.
-When prompted for your password, enter the personal access token.
-
-### Cache Credentials
-
-To avoid having to enter you credentials on every Git operation, run the following:
+If you already use an SSH key to authenticate with GitHub, you can easily add
+it to Beaker and use it in interactive sessions. First, add the SSH key to Beaker:
 
 ```
-git config --global credential.helper store
+cat ~/.ssh/id_rsa | beaker secret write <workspace> ssh-key
 ```
 
-This will cache your personal access token at `~/.git-credentials`.
-
-### Name and Email
-
-Before making a commit, you must tell Git who you are:
+Then, mount the SSH key into a Beaker session:
 
 ```
-git config --global user.name <name>
-git config --global user.email <email>
+beaker session create --secret-mount ssh-key=~/.ssh/id_rsa
 ```
 
-This will be cached in `~/.gitconfig` and persist across sessions on the same machine.
+Test that the SSH key is working:
 
-### Deleting a Token
+```
+ssh -T git@github.com
+```
 
-If your token is compromised, you can delete it [here](https://github.com/settings/tokens).
+To delete your SSH key from Beaker:
 
-![Deleting a personal access token](/docs/images/github-personal-access-token-delete.png)
+```
+beaker secret delete <workspace> ssh-key
+```
+
+### Git Configuration
+
+If you need to make a commit from a session, you will need to configure Git
+with your name and email. You can store Git configuration in a secret an mount it into a session, just like an SSH key. On your machine, run:
+
+```
+cat ~/.ssh/.gitconfig | beaker secret write <workspace> git-config
+```
+
+Then create a session with your Git config:
+
+```
+beaker session create --secret-mount ssh-key=~/.ssh/id_rsa --secret-mount git-config=~/.gitconfig
+```
+
 
 ## Reattaching to a Session
 
