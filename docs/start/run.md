@@ -8,28 +8,22 @@ This example assumes you've successfully [installed Beaker and Docker](install.m
 
 ## Creating a Docker Image for Your Code
 
-As a first step, you need to create a Docker image for your code so Beaker can run it on a cluster.  Fortunately, for simple Python applications this is quite straightforward.  The first step is to create a `Dockerfile` in the same directory as your code.  Below is a sample Dockerfile that can be adapted to your project.  It was simplified from [the AllenNLP Dockerfile](https://github.com/allenai/allennlp/blob/main/Dockerfile).
+As a first step, you need to create a Docker image for your code so Beaker can run it on a cluster.  Fortunately, for simple Python applications this is quite straightforward.  The first step is to create a `Dockerfile` in the same directory as your code.  Below is a sample Dockerfile that can be adapted to your project.
 
 ```Dockerfile
 # The base image, which will be the starting point for the Docker image.
-# This image includes Ubuntu with the latest Python 3.8 release installed.
-FROM python:3.8
+# We're using a PyTorch image built from https://github.com/allenai/docker-images
+# because PyTorch is really big we want to install it first for caching.
+FROM pytorch/pytorch:1.9.0-cuda11.1-cudnn8-runtime
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-
-# This section is needed for GPUs to work.
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
-
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-LABEL com.nvidia.volumes.needed="nvidia_driver"
 
 # This is the directory that files will be copied into.
 # It's also the directory that you'll start in if you connect to the image.
 WORKDIR /stage/
 
-# Copy the `requirements.txt` to `/stage/requirements.txt` and then install them.
+# Copy the `requirements.txt` to `/stage/requirements.txt/` and then install them.
 # We do this first because it's slow and each of these commands are cached in sequence.
 COPY requirements.txt .
 RUN pip install -r requirements.txt
