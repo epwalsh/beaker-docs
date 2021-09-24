@@ -43,7 +43,7 @@ By default, sessions do not request any resources and won't be assigned a GPU.
 If you need GPUs, use the `--gpus <count>` flag when creating a session e.g.:
 
 ```
-beaker session create --gpus 2
+beaker session create --gpus 2 --workspace ai2/your-workspace-name
 ```
 
 Session resources work the same as task resources, which are described [here](../concept/experiments.md#TaskResources)
