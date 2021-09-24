@@ -43,8 +43,10 @@ By default, sessions do not request any resources and won't be assigned a GPU.
 If you need GPUs, use the `--gpus <count>` flag when creating a session e.g.:
 
 ```
-beaker session create --gpus 2 --workspace ai2/your-workspace-name
+beaker session create --gpus 2 --workspace ai2/<name>
 ```
+
+The workspace is used to save images and also for managing secrets.  In the example above, the workspace is specified on the commandline, but you typically would want to use the same workspace for each Beaker session.  You can specify your default workspace with the following command: `beaker config set default_workspace ai2/<name>`.
 
 Session resources work the same as task resources, which are described [here](../concept/experiments.md#TaskResources)
 Node that sessions that don't request GPUs are not guaranteed any memory and may be killed if there is contention for memory on the machine.
