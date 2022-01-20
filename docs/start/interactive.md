@@ -65,6 +65,7 @@ beaker session create -- python3 --version
 ### Alternative Base Images
 
 If you need to use a different base image, pass the `--image` flag when creating a session.
+You can also update you default image for sessions with `beaker config set default_image <image>`.
 
 Beaker Interactive supports both [Docker](https://docker.com) and [Beaker](../concept/images)
 images. To use a Docker image, prefix the image name with `docker://`. To use a
@@ -128,10 +129,13 @@ sudo apt-get install python2
 
 Now, exit the session with `Ctrl-D`.
 Beaker will automatically create an image in your default workspace and wait for the
-image to be pushed. Once the image is pushed, you can create a new session with it:
+image to be pushed. Once the image is pushed, Beaker will update the default image
+in your config file so that future sessions automatically use this image.
+If you don't want to update your config, use `--no-update-default-image`
+or unset the default image with `beaker config unset default_image`.
 
 ```
-beaker session create --image beaker://<image-id>
+beaker session create
 ```
 
 ...and you should now be able to use `python2` like so:
