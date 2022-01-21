@@ -216,18 +216,8 @@ beaker session create --secret-mount ssh-key=~/.ssh/id_rsa --secret-mount git-co
 ## Reattaching to a Session
 
 If you lose connection to a session and want to reattach to it, use `beaker session attach`.
-
-First, find the ID of the session you want to attach to:
-
-```
-beaker session list
-```
-
-Then, reattach to the session:
-
-```
-beaker session attach <session>
-```
+This will connect to the running session by default. If there are multiple running sessions,
+use the `--session` flag to specify one. 
 
 ## Forking a Session
 
@@ -237,7 +227,7 @@ This can be useful if you need to check on the main process of a session without
 To get a new terminal in an existing session, run:
 
 ```
-beaker session exec <session>
+beaker session exec
 ```
 
 When you quit this terminal, the session will continue to run.
@@ -246,7 +236,7 @@ The session will stop when the main process exits.
 You can also provide a command to `exec`. This example prints GPU utilization:
 
 ```
-beaker session exec <session> -- nvidia-smi
+beaker session exec nvidia-smi
 ```
 
 ## Stopping a Session
@@ -254,5 +244,5 @@ beaker session exec <session> -- nvidia-smi
 To stop a session that you are not attached to, run:
 
 ```
-beaker session stop <session>
+beaker session stop
 ```
