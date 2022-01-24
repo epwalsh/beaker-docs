@@ -138,39 +138,46 @@ future date.
 
 ### TaskResources
 
-TaskResources describe minimum external hardware requirements which must be available for a task to
-run.
-
-TaskResources are optional. If a task does not specify any resource requirements, it will:
- - Run immediately.
- - Not have access to GPUs.
- - Not have a memory limit.
- - Be killed if the host machine is running out of memory.
-
-If a task specifies resource requirements, it will claim a slice of the machine proportional to its largest resource request.
-Each machine is divided into a number of slots equal to the number of GPUs it has, or 1 slot if it has no GPUs.
-Tasks that specify resource requirements are allocated enough slots to accomodate their requirements.
-
-For example, if a machine has 8 GPUs and 80GiB of memory, it will be divided into 8 slots, each with 1 GPU and 10GiB of memory.
-If a job requests 1 GPU, it will get 1 GPU and 10GiB of memory.
-If it requests 15 GiB of memory, it will get 2 GPUs and 20GiB of memory.
-Note that in this example, the job is allocated 2 GPUs even though it didn't request any.
-
-If a task specifies resource requirements, it will:
- - Wait to run until there are sufficient resources available on the machine.
- - Have guaranteed access to at least the resources it requested.
- - Have limited memory proportional to the number of slots it is using.
- - Not be killed if the host machine is running out of memory.
-
-Note on CPUs: The amount of CPU a job can use is only limited when there is contention.
-During periods of contention, each job gets a share of the CPU proportional to the number of slots it is using.
+TaskResources describe minimum external hardware requirements which must be available for a task to run.
+Generally, only a GPU request is necessary.
 
 | Field | Type | Required? | Description |
 | ----- | ---- | :-------: | ----------- |
 | cpuCount | double | No | Minimum number of logical CPU cores. It may be fractional. Since CPU is only limited during periods of contention, it's generally not necessary to specify this field.<br><br>Examples: `4`, `0.5`. |
 | gpuCount | int | No | Minimum number of GPUs. It must be non-negative. |
 | memory | string | No | Minimum available system memory as a number with unit suffix. <br><br>Examples: `2.5GiB`, `1024m`. |
-| sharedMemory | string | No | Size of /dev/shm as a number with unit suffix. <br><br>Examples: `2.5GiB`, `1024m`. |
+| sharedMemory | string | No | Size of /dev/shm as a number with unit suffix. Defaults to 1GiB. <br><br>Examples: `2.5GiB`, `1024m`. |
+
+#### Slots
+
+Each machine is divided into a number of slots equal to the number of GPUs it has, or 1 slot if it has no GPUs.
+Jobs that specify resource requirements are allocated enough slots to accomodate their requirements.
+
+Jobs may be allocated more resources than they request due to the slot mechanism.
+For example, if a machine has 8 GPUs and 80GiB of memory, it will be divided into 8 slots, each with 1 GPU and 10GiB of memory.
+If a job requests 15 GiB of memory, it will get 20GiB of memory and 2 GPUs even though it didn't request any.
+
+#### GPU
+
+GPUs are only available to jobs that explicitly request them.
+
+#### CPU
+
+CPU is unlimited except during times of contention.
+During contention, each job gets a share of the CPU proportional to the number of slots it is using.
+
+#### Memory
+
+Memory is unlimited except for jobs that explicitly request memory.
+If a job requests memory it will be allocated enough slots to satisfy its request which could
+lead to unintended GPU use. Generally, it's not necessary to specify a memory request.
+
+Jobs are killed in the following order when the host runs out of memory:
+1. Jobs with no resource requests.
+2. Jobs with resource requests but no memory request (e.g. only a GPU request).
+3. Jobs with memory requests.
+
+Within each category, the job using the most memory will be killed.
 
 ## Older Spec Formats
 
