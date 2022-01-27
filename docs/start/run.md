@@ -63,7 +63,7 @@ tasks:
     image:
       # You will want to replace `username` below with your Beaker username
       beaker: username/my-experiment
-      command: [python, -u, main.py]
+    command: [python, -u, main.py]
     result:
       # Beaker will capture anything that's written to this location and store it in the results
       # dataset.
