@@ -30,6 +30,7 @@ frees you from manually managing your machines, allowing you to seamlessly:
 * [Groups](/docs/concept/groups.md)
 * [Workspaces](/docs/concept/workspaces.md)
 * [Secrets](/docs/concept/secrets.md)
+* [Exit Codes](/docs/concept/exitcodes.md)
 
 ### Resources
 
