@@ -4,7 +4,7 @@ By now you are probably eager to run an experiment with your code in Beaker.  Th
 
 This tutorial assumes that your experiment needs GPUs, is built with PyTorch, and consists of a single command.  If these assumptions don't hold for your experiments, then these general steps will still apply but you might need to make some more modifications to actually run your experiment.
 
-This example assumes you've successfully [installed Beaker and Docker](install.md). This particular example also uses GPUs and so requires installation of the [NVidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+This example assumes you've successfully [installed Beaker and Docker](install.md). This particular example also uses GPUs and so requires installation of the [NVidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html). Note: The NVidia container toolkit is strictly for Linux. The toolkit is already installed in AI2's on-prem machines, but if you're working with Beaker locally on another OS, you will encounter an assertion failure in main.py (in the example code from https://github.com/beaker/pytorch-example).
 
 ## Creating a Docker Image for Your Code
 
@@ -71,7 +71,7 @@ tasks:
     resources:
       gpuCount: 1
     context:
-      cluster: ai2/on-prem-ai2-server
+      cluster: ai2/general-cirrascale
       priority: normal
 ```
 
@@ -86,3 +86,4 @@ beaker experiment create beaker-conf.yaml
 The command will output a beaker URL that you can visit to see details about your experiment.
 
 That's it!  While that took a bit of setup, now moving our job to another cluster is simply a one line change, and it would be easy to script a large hyperparameter tuning.  Also, our results are persisted forever on Beaker.org, so if we ever need to check back on our experiment we can just look there.
+
