@@ -8,10 +8,6 @@ frees you from manually managing your machines, allowing you to seamlessly:
 * view your experiments' progress and results using the [web UI](http://www.beaker.org).
 * create an isolated interactive session for development and debugging.
 
-## Other Resources
-
-* [Beaker video tutorial](https://drive.google.com/file/d/1x5YnFcty-L7KKrFbLtIR8ZkA9mGvxiqz/view)
-
 ## User Guide
 
 ### Get Started
