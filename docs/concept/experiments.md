@@ -179,6 +179,12 @@ Jobs are killed in the following order when the host runs out of memory:
 
 Within each category, the job using the most memory will be killed.
 
+##### Shared Memory
+
+Jobs are given 5 GB of shared memory by default. If a job fails due to lack of shared memory space, it can be re-run with the new alottment of shared memory specified by the `--shm-size=your_new_shared_memory_size` flag added to your docker run command. Shared memory should be specificed in the form `2gb`, `50mb`, etc.
+
+To view the shared memory segments of your running jobs, use the `ipcs -m` command.
+
 ## Older Spec Formats
 
 ### V1
