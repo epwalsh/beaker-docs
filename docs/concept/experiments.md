@@ -146,7 +146,7 @@ Generally, only a GPU request is necessary.
 | cpuCount | double | No | Minimum number of logical CPU cores. It may be fractional. Since CPU is only limited during periods of contention, it's generally not necessary to specify this field.<br><br>Examples: `4`, `0.5`. |
 | gpuCount | int | No | Minimum number of GPUs. It must be non-negative. |
 | memory | string | No | Minimum available system memory as a number with unit suffix. <br><br>Examples: `2.5GiB`, `1024m`. |
-| sharedMemory | string | No | Size of /dev/shm as a number with unit suffix. Defaults to 1GiB. <br><br>Examples: `2.5GiB`, `1024m`. |
+| sharedMemory | string | No | Size of /dev/shm as a number with unit suffix. Defaults to 5GiB. <br><br>Examples: `2.5GiB`, `1024m`. |
 
 #### Slots
 
@@ -179,9 +179,17 @@ Jobs are killed in the following order when the host runs out of memory:
 
 Within each category, the job using the most memory will be killed.
 
-##### Shared Memory
+#### Shared Memory
 
-Jobs are given 5 GB of shared memory by default. If a job fails due to lack of shared memory space, it can be re-run with the new alottment of shared memory specified by the `--shm-size=your_new_shared_memory_size` flag added to your docker run command. Shared memory should be specificed in the form `2gb`, `50mb`, etc.
+Jobs are given 5 GiB of shared memory by default. If a job fails due to lack of shared memory space, it can be re-run with the new alottment of shared memory specified by the `--shared-memory=your_new_shared_memory_size` flag added to your beaker session create command. Shared memory should be specificed in the form `2.5GiB`, `1024m`, etc.
+
+To start a beaker session with a specified amount of shared memory, run:
+
+```
+beaker session create --shared-memory='2GiB'
+```
+
+To add more shared memory to your batch job, see the example experiment spec below.
 
 To view the shared memory segments of your running jobs, use the `ipcs -m` command.
 
@@ -238,6 +246,7 @@ tasks:
       memory: '7.5GiB' # number followed by unit suffix
       cpu: 1.5    # number of logical cores
       gpuCount: 2      # must be an integer
+      sharedMemory: '7GiB' # default is 5 GiB
 
 - name: my-second-task
   spec:
