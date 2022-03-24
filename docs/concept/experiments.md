@@ -236,7 +236,7 @@ tasks:
     # All fields are optional, and any number can be set.
     requirements:
       memory: '7.5GiB' # number followed by unit suffix
-      cpuCount: 1.5    # number of logical cores
+      cpu: 1.5    # number of logical cores
       gpuCount: 2      # must be an integer
 
 - name: my-second-task
