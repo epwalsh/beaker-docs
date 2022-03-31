@@ -18,7 +18,7 @@ manage many nodes under one or more clusters.
    [already have one](https://beaker.org/clusters), you'll need to create a cluster.
 
    ```
-   beaker cluster create <account>/<name>
+   beaker cluster create on-prem <account>/<name>
    ```
 
    The account may be an individual account or an organization. It should be the same account under
@@ -28,10 +28,19 @@ manage many nodes under one or more clusters.
    [beaker.org](https://beaker.org/clusters), starts jobs, and monitors their execution. The
    executor is also responsible for capturing and uploading results.
 
-   Beaker offers a command to install and configure the executor as a systemd service.
+   Beaker offers several commands to install and configure the executor as a systemd service.
+   To set up the executor, run these commands:
 
    ```bash
-   sudo beaker executor install <account/cluster>
+   sudo beaker executor configure <account/cluster>
+   sudo beaker executor install
+   ```
+   
+   If you'd like to use Beaker without providing access the the GPUs running on the host, run 
+   the `configure` command with the `--cpu-only` flag:
+   
+   ```bash
+   sudo beaker executor configure --cpu-only <account/cluster>
    ```
 
 1. Run a test job to ensure your cluster is working. Replace ```<cluster>``` with the name of the
