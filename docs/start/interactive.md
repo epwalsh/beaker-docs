@@ -176,7 +176,7 @@ If you already use an SSH key to authenticate with GitHub, you can easily add
 it to Beaker and use it in interactive sessions. First, add the SSH key to Beaker:
 
 ```
-cat ~/.ssh/id_rsa | beaker secret write <workspace> ssh-key
+cat ~/.ssh/id_rsa | beaker secret write --workspace <workspace> ssh-key
 ```
 
 Then, mount the SSH key into a Beaker session:
@@ -203,7 +203,7 @@ If you need to make a commit from a session, you will need to configure Git
 with your name and email. You can store Git configuration in a secret an mount it into a session, just like an SSH key. On your machine, run:
 
 ```
-cat ~/.ssh/.gitconfig | beaker secret write <workspace> git-config
+cat ~/.ssh/.gitconfig | beaker secret write --workspace <workspace> git-config
 ```
 
 Then create a session with your Git config:
