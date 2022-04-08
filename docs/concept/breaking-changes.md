@@ -4,7 +4,7 @@ On Wednesday, April 20 2022, Beaker will require that all experiment specs follo
 
 ## How will this change affect my experiment?
 
-If your spec is not updated, your experiments will not run.
+If your spec is using the `v1` or `v2-alpha` versions, you will not be able to create experiments.
 
 ## How do I upgrade and avoid any downtime?
 
