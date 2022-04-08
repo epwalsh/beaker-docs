@@ -1,6 +1,6 @@
 # Breaking Changes in Beaker
 
-On Wednesday, April 20 2022, Beaker will require that all experiment specs follow the `v2` format. **v1 and v2-alpha will be ***deprecated***.
+On Wednesday, April 20 2022, Beaker will require that all experiment specs use the `v2` format. The **`v1` and `v2-alpha` specifications will be ***deprecated***.
 
 ## How will this change affect my experiment?
 
