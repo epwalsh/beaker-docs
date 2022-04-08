@@ -55,7 +55,7 @@ You may notice that the authorToken, dependsOn, and minimum memory requirement f
 
 @sam or michal, what should I say about why we're deprecating authorToken and dependsOn??
 
-Minimum memory requirement fields are being deprecated because memory will not be preacllocated. You may set a maximum limit for the amount of memory your experiments will use.
+Minimum memory requirement fields are being deprecated because memory is no longer preallocated. You may set a maximum limit for the amount of memory your experiments will use.
 
 ## Questions?
 
