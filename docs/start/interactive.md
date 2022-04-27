@@ -43,7 +43,7 @@ By default, sessions do not request any resources and won't be assigned a GPU.
 If you need GPUs, use the `--gpus <count>` flag when creating a session e.g.:
 
 ```
-beaker session create --gpus 2 --workspace ai2/your-workspace-name
+$ beaker session create --gpus 2 --workspace ai2/your-workspace-name
 ```
 
 Session resources work the same as task resources, which are described [here](../concept/experiments.md#TaskResources)
@@ -59,7 +59,7 @@ For example, the command below prints the Python version.
 You could also use this to run a Python script in your home directory.
 
 ```
-beaker session create -- python3 --version
+$ beaker session create -- python3 --version
 ```
 
 ### Alternative Base Images
@@ -74,7 +74,7 @@ Beaker image use the `beaker://` prefix instead.
 For example, this command uses the AllenNLP base image and runs the `test-install` command:
 
 ```
-beaker session create --image docker://allennlp/allennlp -- allennlp test-install
+$ beaker session create --image docker://allennlp/allennlp -- allennlp test-install
 ```
 
 Some features, like user mapping, will only work with the official
@@ -117,14 +117,14 @@ For this example, we will create an image with `python2` installed.
 First, create a session with the `--save-image` flag:
 
 ```
-beaker session create --save-image
+$ beaker session create --save-image
 ```
 
 Then, install `python2`:
 
 ```
-sudo apt-get update
-sudo apt-get install python2
+$ sudo apt-get update
+$ sudo apt-get install python2
 ```
 
 Now, exit the session with `Ctrl-D`.
@@ -151,7 +151,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 Give the image a name to make it easier to find in the future:
 
 ```
-beaker image rename <image-id> <new-name>
+$ beaker image rename <image-id> <new-name>
 ```
 
 ## Secrets
@@ -161,13 +161,13 @@ beaker image rename <image-id> <new-name>
 To use a secret as an environment variable:
 
 ```
-beaker session create --secret-env <secret name>=<environment variable>
+$ beaker session create --secret-env <secret name>=<environment variable>
 ```
 
 To mount a secret as a file:
 
 ```
-beaker session create --secret-mount <secret name>=<file path>
+$ beaker session create --secret-mount <secret name>=<file path>
 ```
 
 ## Git Authentication
@@ -176,25 +176,25 @@ If you already use an SSH key to authenticate with GitHub, you can easily add
 it to Beaker and use it in interactive sessions. First, add the SSH key to Beaker:
 
 ```
-cat ~/.ssh/id_rsa | beaker secret write --workspace <workspace> ssh-key
+$ cat ~/.ssh/id_rsa | beaker secret write --workspace <workspace> ssh-key
 ```
 
 Then, mount the SSH key into a Beaker session:
 
 ```
-beaker session create --secret-mount ssh-key=~/.ssh/id_rsa
+$ beaker session create --secret-mount ssh-key=~/.ssh/id_rsa
 ```
 
 Test that the SSH key is working:
 
 ```
-ssh -T git@github.com
+$ ssh -T git@github.com
 ```
 
 To delete your SSH key from Beaker:
 
 ```
-beaker secret delete <workspace> ssh-key
+$ beaker secret delete <workspace> ssh-key
 ```
 
 ### Git Configuration
@@ -203,15 +203,89 @@ If you need to make a commit from a session, you will need to configure Git
 with your name and email. You can store Git configuration in a secret an mount it into a session, just like an SSH key. On your machine, run:
 
 ```
-cat ~/.ssh/.gitconfig | beaker secret write --workspace <workspace> git-config
+$ cat ~/.ssh/.gitconfig | beaker secret write --workspace <workspace> git-config
 ```
 
 Then create a session with your Git config:
 
 ```
-beaker session create --secret-mount ssh-key=~/.ssh/id_rsa --secret-mount git-config=~/.gitconfig
+$ beaker session create --secret-mount ssh-key=~/.ssh/id_rsa --secret-mount git-config=~/.gitconfig
 ```
 
+## Ports
+
+By default any open ports in your session aren't exposed on the host. Which means that if you
+run something (like a webserver) that needs to listen on a port, you won't be able to access
+it outside of your session.
+
+To remedy this, you can can specify the ports you'd like exposed when you create
+a new session. For instance, this exposes port `8888`, the default that's used by 
+Jupyter notebooks:
+
+```
+$ beaker session create --port 8888
+```
+
+The host port that's opened won't be the same as what's requested. Instead a random, ephemeral
+host port will be selected. This is both to help prevent long-running servers and prevent multiple 
+sessions on the same host from making colliding reservations.
+
+The host port that's mapped to the requested port in your container is printed out as the session
+is started:
+
+```bash
+$ beaker session create --gpus 1 --port 8888
+Defaulting to workspace org/workspace
+Starting session ZZZ with at least 1 GPU... (Press Ctrl+C to cancel)
+Waiting for session to start... Done!
+Reserved 1 GPU, 15 CPUs
+Exposed Ports: 0.0.0.0:49155->8888/tcp # <-- Port mapping
+```
+
+In the above example, the host port `49155` was randomly selected and bound to the port
+`8888` in the interactive session. This means that connections made to port `49155` on the host will 
+be routed to port `8888` in the session. So if a Jupyter notebook were running and listening
+on port `8888` in the session, and the server it's running on has a network resolvable hostname of
+`example.org`, we'd access the notebook by going to the URL `http://example.org:49155/` in the browser
+of our choosing.
+
+You can also see the port bindings via the `beaker session describe` command. By default the command
+provides the details of the session you're currently running on a host (if there's only one). Which 
+means you can execute it without any arguments, like so:
+
+```bash
+$ beaker session describe
+Found running session: ZZZ
+ID         ZZZ
+NAME       N/A
+User       Your Name
+IMAGE      beaker://org/image
+           https://beaker.org/im/YYY
+STARTED    2022-04-27 18:13:39
+ELAPSED    00:00:48
+STATUS     running
+GPUS       1
+TCP PORTS  server.org:49155->8888/tcp (e.g., http://server.org:49155)
+```
+
+If you have multiple sessions running, you can provide the session ID as an argument:
+
+```
+$ beaker session describe <id>
+```
+
+You can bind multiple ports by specifying the `--port` flag multiple times:
+
+```
+$ beaker session create --gpus 1 --port 8888 --port 9999
+Defaulting to workspace org/workspace
+Starting session ZZZ with at least 1 GPU... (Press Ctrl+C to cancel)
+Waiting for session to start.... Done!
+Reserved 1 GPU, 15 CPUs
+Exposed Ports: 0.0.0.0:49157->8888/tcp, 0.0.0.0:49156->9999/tcp
+```
+
+At this time only TCP ports can be exposed. If you need UDP support, [let us know](mailto:beaker@allenai.org).
 
 ## Reattaching to a Session
 
@@ -227,7 +301,7 @@ This can be useful if you need to check on the main process of a session without
 To get a new terminal in an existing session, run:
 
 ```
-beaker session exec
+$ beaker session exec
 ```
 
 When you quit this terminal, the session will continue to run.
@@ -236,7 +310,7 @@ The session will stop when the main process exits.
 You can also provide a command to `exec`. This example prints GPU utilization:
 
 ```
-beaker session exec nvidia-smi
+$ beaker session exec nvidia-smi
 ```
 
 ## Stopping a Session
@@ -244,5 +318,5 @@ beaker session exec nvidia-smi
 To stop a session that you are not attached to, run:
 
 ```
-beaker session stop
+$ beaker session stop
 ```
